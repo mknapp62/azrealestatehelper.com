@@ -101,7 +101,7 @@ session_start();
                 $stmt = $pdo->prepare("SELECT * FROM buyer WHERE Email= :email");
                 $stmt->execute(array(
                   ':email' => $_POST['createemail']  )); 
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);  
                 if ($user['Email'] == $_POST['createemail']) {
                     // email found
                  $_SESSION['emailexists'] = 1;
@@ -118,7 +118,15 @@ session_start();
                     ':user1' => $_POST["createname"],
                     ':buyerEmail' => $_POST["createemail"],
                     ':buyerPass' => $_POST["createpswd"]));
-                    $name = $pdo->query("SELECT * FROM buyer WHERE Email='{$_POST['createemail']}';")->fetch();
+                    $name = $pdo->query("SELECT * FROM buyer WHERE Email='{$_POST['createemail']}';")->fetch();  //preparethis
+                    
+                    /*
+                    $name = $pdo->prepare("SELECT * FROM buyer WHERE Email= ? ;");
+                    $name->execute(array($_POST['createemail']);
+                    $name2->fetchAll();
+                    */
+                    
+                    
                     $_SESSION['name'] = $name['user1']; /* ['buyer1']  is from the associative array pdo above*/
                     $_SESSION['user_id'] = $name['user_id']; /* this is for the foreign key that goes into any id field*/
                     $_SESSION['buyer_id'] = $name['user_id'];
@@ -175,7 +183,13 @@ session_start();
             ':yearbuilt' => $_GET["yearbuilt"],
             ':wastewater' => $sewer));
             
-                $name = $pdo->query("SELECT * FROM property WHERE owner1='{$_GET['seller1']}';")->fetch();
+            $name = $pdo->query("SELECT * FROM property WHERE owner1='{$_GET['seller1']}';")->fetch(); //preparethis
+            
+            /*
+            $name = $pdo->prepare("SELECT * FROM property WHERE owner1 = ?;");
+            $name->execute(array($_GET['seller1']));
+            $name2->fetchAll();
+            */
         
             $_SESSION['property_id'] = $name['property_id'];
            
@@ -257,7 +271,14 @@ session_start();
                 ':additionalterms' => $_GET["additionalterms"],
                 ':accepttime' => $_GET["accepttime"]));
         
-                $contract = $pdo->query("SELECT * FROM contract WHERE seller1='{$_SESSION['seller1']}';")->fetch();
+                $contract = $pdo->query("SELECT * FROM contract WHERE seller1='{$_SESSION['seller1']}';")->fetch(); //preparethis
+                
+                /*
+                $contract = $pdo->query("SELECT * FROM contract WHERE seller1= ?;")
+                $contract->execute(array($_SESSION['seller1']));
+                $contract2->fetchAll();
+                */
+                
                 $_SESSION['contract_id'] = $contract['contract_id'];
                 $_SESSION['buyer1'] = $contract['buyer1'];
                 $_SESSION['buyer2'] = $contract['buyer2'];
@@ -431,7 +452,13 @@ session_start();
                   ':firmphone' => $_GET["firmphone"],
                   ':agentemail' => $_GET["agentemail"]));
         
-                  $agent = $pdo->query("SELECT * FROM agent WHERE agentname='{$_GET["agentname"]}';")->fetch();
+                  $agent = $pdo->query("SELECT * FROM agent WHERE agentname='{$_GET["agentname"]}';")->fetch();  //preparethis
+                  /*
+                  $agent = $pdo->query("SELECT * FROM agent WHERE agentname= ? ;")
+                  $agent->execute(array($_GET["agentname"]));
+                  $agent2->fetchALL();
+                  */
+                  
                   /* $name use this is for any other session var */
                   $_SESSION['agentlicense'] = $agent['agentlicense'];
                   $_SESSION['agentname2'] = $agent['agentname2'];
@@ -482,18 +509,23 @@ class LoadContracts{
             require "php/pass.php";
             $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
             if(isset($_POST['propertyid'])){$_SESSION['property_id'] = $_POST['propertyid'];};
-            $binsrvars = $pdo->query("SELECT * FROM contract WHERE property_id = '{$_SESSION['propertyid']}' ORDER BY contract_id ASC LIMIT 1;")->fetch();   
+           /* $binsrvars = $pdo->query("SELECT * FROM contract WHERE property_id = '{$_SESSION['propertyid']}' ORDER BY contract_id ASC LIMIT 1;")->fetch();  */  //preparethisdone
+            
+            
+            $binsrvars = $pdo->prepare("SELECT * FROM contract WHERE property_id = ? ORDER BY contract_id ASC LIMIT 1;"); 
+            $binsrvars->execute(array($_SESSION['propertyid']));
+           $binsrvars2 = $binsrvars->fetchAll();
     
-            $_SESSION['binsr0'] = $binsrvars['binsr0'];
-            $_SESSION['binsr1'] = $binsrvars['binsr1'];
-            $_SESSION['binsr2'] = $binsrvars['binsr2'];
-            $_SESSION['binsr3'] = $binsrvars['binsr3'];
-            $_SESSION['binsr4'] = $binsrvars['binsr4'];
-            $_SESSION['binsr5'] = $binsrvars['binsr5'];
-            $_SESSION['binsr6'] = $binsrvars['binsr6'];
-            $_SESSION['binsr7'] = $binsrvars['binsr7'];
-            $_SESSION['binsr8'] = $binsrvars['binsr8'];
-            $_SESSION['binsr9'] = $binsrvars['binsr9'];
+            $_SESSION['binsr0'] = $binsrvars2['binsr0'];
+            $_SESSION['binsr1'] = $binsrvars2['binsr1'];
+            $_SESSION['binsr2'] = $binsrvars2['binsr2'];
+            $_SESSION['binsr3'] = $binsrvars2['binsr3'];
+            $_SESSION['binsr4'] = $binsrvars2['binsr4'];
+            $_SESSION['binsr5'] = $binsrvars2['binsr5'];
+            $_SESSION['binsr6'] = $binsrvars2['binsr6'];
+            $_SESSION['binsr7'] = $binsrvars2['binsr7'];
+            $_SESSION['binsr8'] = $binsrvars2['binsr8'];
+            $_SESSION['binsr9'] = $binsrvars2['binsr9'];
    
 
       $contract2 = $pdo->prepare("SELECT * FROM contract WHERE property_id = :xyz;");
@@ -509,7 +541,7 @@ class LoadContracts{
                 FROM contract
                 WHERE property_id = '{$_SESSION['propertyid']}'
                 ORDER BY createdby DESC
-                LIMIT 1;")->fetch();
+                LIMIT 1;")->fetch(); //no user input don't need to prepare
         $_SESSION['sent'] = $whowaslast['sent'];
         $_SESSION['createdby'] = $whowaslast['createdby'];
    
@@ -752,7 +784,12 @@ class LoadContracts{
         
          $name = $pdo->query("SELECT * FROM property
                             INNER JOIN contract ON property.property_id=contract.property_id
-                            WHERE contract.property_id='{$_POST['propertyid']}';")->fetch();
+                            WHERE contract.property_id='{$_POST['propertyid']}';")->fetch(); //preparethis
+        /*
+        $name = $pdo->prepare("SELECT * FROM property INNER JOIN contract ON property.property_id=contract.property_id WHERE contract.property_id= ? ;")
+        $name->execute(array($_POST['propertyid']));
+        $name2->fetchAll();
+        */
     
     
         /* $name use this is for any other session var */
@@ -768,9 +805,8 @@ class LoadContracts{
         $_SESSION['sewer' .$inc] = $name['sewer'];
         
     
-        $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
-    
-            $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+        $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch(); //no need to preparethis  user input controlled
+
             $_SESSION['deal_id'] = $dealvars['deal_id'];
             $_SESSION['date'] = $dealvars['date'];
             $_SESSION['sent'] = $dealvars['sent'];
@@ -810,6 +846,12 @@ class LoadContracts{
         $name = $pdo->query("SELECT * FROM property
                             INNER JOIN contract ON property.property_id=contract.property_id
                             WHERE contract.property_id='{$_SESSION['property_id']}';")->fetch();
+    //preparethis
+    /*
+    $name = $pdo->query("SELECT * FROM property INNER JOIN contract ON property.property_id=contract.property_id WHERE contract.property_id= ?;")
+    $name->execute(array($_SESSION['property_id']));
+    $name2->fetchAll();
+    */
     
     
         /* $name use this is for any other session var */
@@ -826,9 +868,9 @@ class LoadContracts{
         $inc++;
         $_SESSION['inc']++;
     
-        $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+        $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch(); //no need to prepare
     
-            $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+           
             $_SESSION['deal_id'] = $dealvars['deal_id'];
             $_SESSION['date'] = $dealvars['date'];
             $_SESSION['sent'] = $dealvars['sent'];
@@ -849,7 +891,7 @@ class LoadContracts{
             FROM contract
             WHERE property_id = '{$_SESSION['property_id']}'
             ORDER BY contract_id DESC
-            LIMIT 1;")->fetch();
+            LIMIT 1;")->fetch(); //no need to prepare, no usr input
             $_SESSION['createdby'] = $whowaslast['createdby'];  
             $_SESSION['sent'] = $whowaslast['sent'];
             
