@@ -522,11 +522,17 @@ $name['owner1']){
             $c = "/classes.php";
    require dirname("/home/knapp62/public_html/landing/index.php", 2).$c;
    (new SqlUpadates())->UpdateContract();
+      
+  }
+  
+  
+  /* SENDING CONTRACT TO OWNER/AGENT THIS WILL MARK AS SENT AND RELOCATE TO RESPONSE PAGE  */
      if(isset($_GET['sendcontract'])){
          $contract2 = $pdo->prepare("UPDATE contract SET sent = 1 WHERE contract_id = :xyz;");
   $contract2->execute(array(':xyz' => $_SESSION["contract_id"]));
   
-  $to = $_SESSION['agentemail'].', '.$_GET['selleremail'];
+  $_SESSION['agentemail'] == null ? $to = $_GET['selleremail'] : $to = $_SESSION['agentemail'];
+  
         $subject = "Home Offer";
         $txt = "Hello, you have recieved an offer to purchase your home!";
         $headers = "From: offer@azrealestatehelper.com";
@@ -534,16 +540,8 @@ $name['owner1']){
   
   header("Location: https://response.azrealestatehelper.com", 302);
     exit();
-     }
-      }
+}
 
-
-
-
-/* Create new purchase "Contract deal information page"
---------------------------------------------------------------------*/
-
-require_once "pass.php";
 
 
 
