@@ -6,10 +6,10 @@ if (var Purchase !== undefined && var null !== null){
 
 */
 $(document).ready(function(){
-  $('[data-bs-toggle="popover"]').popover({html: true});});
+  $('[data-bs-toggle="popover"]').popover({html: true});
+    $('#address').focusout(function(){
+        $('#header2').text($('#address').val());
+        $('#header2').fadeIn(4000);
+    });
 
-
-  var id = "<?php echo $_SESSION['name'];?>";
-  if("<?php isset($_SESSION['user_id']);?>"){
-    $("#Buyer1").val(id);
-  }
+});
