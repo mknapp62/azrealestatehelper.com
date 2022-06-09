@@ -122,11 +122,27 @@ require_once "pass.php";
       
   if(isset($_GET["buyer1"]) && isset($_SESSION["contract_id"]) &&  $nameproperty['property_id'] == $_SESSION['property_id'] ){
       
-      $c = "/classes.php";
-   require dirname("/home/knapp62/public_html/landing/index.php", 2).$c;
+     $c = "/classes.php";
+   require_once dirname("/home/knapp62/public_html/landing/index.php", 2).$c; 
    (new SqlUpadates())->UpdateContract();
-     
-      echo "<meta http-equiv='refresh' content='0'>";
+    if($_GET["buyeragentname"] != ""){
+               $c = "/classes.php";
+   require_once dirname("/home/knapp62/public_html/landing/index.php", 2).$c;
+        (new SqlInsertNew())->NewBuyerAgent();
+        }else{
+                  unset ($_SESSION['buyeragentlicense']);
+                  unset ($_SESSION['buyeragentname2']);
+                  unset ($_SESSION['buyeragentname']);
+                  unset ($_SESSION['buyeragentlicense2']);
+                  unset ($_SESSION['buyerfirmname']);
+                  unset ($_SESSION['buyerfirmaddress']);
+                  unset ($_SESSION['buyerfirmlicense']);
+                  unset ($_SESSION['buyerfirmphone']);
+                  unset ($_SESSION['buyeragentemail']);
+                  unset ($_SESSION['buyerselleragentid']);
+                }
+     header("Location: https://confirm.azrealestatehelper.com");
+     // echo "<meta http-equiv='refresh' content='0'>";
       exit();
       }
 
@@ -361,7 +377,25 @@ require_once "pass.php";
           }else{
             $_SESSION['homewarrantypaidbysellercheck'] ="";
           }
-
+        
+        /*if buyeragentagent is set --------------------------*/
+        if($_GET["buyeragentname"] != ""){
+            $c = "/classes.php";
+        require dirname("/home/knapp62/public_html/landing/index.php", 2).$c;
+        (new SqlInsertNew())->NewBuyerAgent();
+        }else{
+          unset ($_SESSION['buyeragentlicense']);
+          unset ($_SESSION['buyeragentname2']);
+          unset ($_SESSION['buyeragentname']);
+          unset ($_SESSION['buyeragentlicense2']);
+          unset ($_SESSION['buyerfirmname']);
+          unset ($_SESSION['buyerfirmaddress']);
+          unset ($_SESSION['buyerfirmlicense']);
+          unset ($_SESSION['buyerfirmphone']);
+          unset ($_SESSION['buyeragentemail']);
+          unset ($_SESSION['buyerselleragentid']);
+            
+        }
           /*if agent is set --------------------------*/
         if($_GET["agentname"] != ""){
         $sqlagent = "INSERT INTO agent (agentname, agentlicense, agentname2, agentlicense2, firmname, firmaddress, firmlicense, firmphone, agentemail)
