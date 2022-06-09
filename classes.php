@@ -4,7 +4,7 @@ session_start();
 
 
     class FileData{
-        function FileDataResponse(){
+        static public function FileDataResponse(){
             require "php/pass.php";
             $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
             
@@ -25,7 +25,8 @@ session_start();
     }
 
     class LoadLanding{
-        function LoadContracts(){
+        
+        static public function LoadContracts(){
             require "php/pass.php";
             $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
               /*RETURNS ALL SALES CONTRACTS FROM DIFFERENT BUYERS*/
@@ -95,7 +96,7 @@ session_start();
           }
         }
         
-        function NewUser(){
+        static public function NewUser(){
               session_unset();
       
                 $stmt = $pdo->prepare("SELECT * FROM buyer WHERE Email= :email");
@@ -141,14 +142,14 @@ session_start();
         
     class SqlInsertNew{
       
-        function NewProperty(){
+        static public function NewProperty(){
             $sqltest = "INSERT INTO property (owner1, owner2, address, city, county, zip, assessornum, legaldisc, yearbuilt, sewer)
                   VALUES (:seller1, :seller2, :address, :city, :county, :zip, :assessornum, :legaldisc, :yearbuilt, :wastewater)";
             return $sqltest;
         
         }
         
-        function NewBuyerAgent(){
+        static public function NewBuyerAgent(){
             require "php/pass.php";
              $sqlagent = "INSERT INTO agent (agentname, agentlicense, agentname2, agentlicense2, firmname, firmaddress, firmlicense, firmphone, agentemail)
                 VALUES (:agentname, :agentlicense, :agentname2, :agentlicense2, :firmname, :firmaddress, :firmlicense, :firmphone, :agentemail)";
@@ -193,14 +194,15 @@ session_start();
     class SqlUpadates{
         
         
-        function UpdateBuyerAgent(){
-            
+        public static function UpdateBuyerAgent(){
+            require "php/pass.php";
+             $pdo = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
             $buyeragentvars = $pdo->query("SELECT * FROM contract WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
               $_SESSION['buyeragentid'] = $buyeragentvars['buyeragentid'];
             
              $sqlagent = "UPDATE agent SET agentname = ?, agentlicense = ?, agentname2 = ?, agentlicense2 = ?, firmname = ?, firmaddress = ?, firmlicense = ?, firmphone = ?, agentemail = ? WHERE agentid = ?;"; 
                
-                $pdo = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+               
                 $_SESSION['buyeragentname'] = $_GET["buyeragentname"];
                 $stmtagent = $pdo->prepare($sqlagent);
                 $stmtagent->execute(array($_GET["buyeragentname"], $_GET["buyeragentlicense"], $_GET["buyeragentname2"], $_GET["buyeragentlicense2"], $_GET["buyerfirmname"], $_GET["buyerfirmaddress"], $_GET["buyerfirmlicense"], $_GET["buyerfirmphone"], $_GET["buyeragentemail"], $_SESSION['buyeragentid']));
@@ -223,8 +225,35 @@ session_start();
             
         }
      
+        public static function UpdateSellerAgent(){
+            require "php/pass.php";
+            $pdo = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);       
+                        
+            $selleragentvars = $pdo->query("SELECT * FROM contract WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+              $_SESSION['selleragentid'] = $selleragentvars['selleragentid'];
+              
+             $sqlupadateagent = "UPDATE agent SET agentname = :agentname, agentlicense = :agentlicense, agentname2 = :agentname2, agentlicense2 = :agentlicense2, firmname = :firmname, firmaddress = :firmaddress, firmlicense = :firmlicense, firmphone = :firmphone, agentemail = :agentemail
+                                    WHERE agentid = :agentid";
+
+                $stmtupdateagent = $pdo->prepare($sqlupadateagent);
+                $stmtupdateagent->execute(array(
+                  ':agentid' => $_SESSION['selleragentid'],
+                  ':agentname' => $_GET["agentname"],
+                  ':agentlicense' => $_GET["agentlicense"],
+                  ':agentname2' => $_GET["agentname2"],
+                  ':agentlicense2' => $_GET["agentlicense2"],
+                  ':firmname' => $_GET["firmname"],
+                  ':firmaddress' => $_GET["firmaddress"],
+                  ':firmlicense' => $_GET["firmlicense"],
+                  ':firmphone' => $_GET["firmphone"],
+                  ':agentemail' => $_GET["agentemail"]));
+   
+   
+                LoadContracts::loadselleragent();
+                 
+        }
                     
-        function UpdateProperty1(){
+        static public function UpdateProperty1(){
             
             $sewer = "";
             function test_input($data) {
@@ -288,7 +317,7 @@ session_start();
         }
         
         
-        function updateContract(){
+        static public function updateContract(){
              require "php/pass.php";
                     $leadpaint = "";
             if($_SESSION['yearbuilt'] < 1978){
@@ -353,168 +382,8 @@ session_start();
                 ':additionalterms' => $_GET["additionalterms"],
                 ':accepttime' => $_GET["accepttime"]));
      
-                
-                $contract = $pdo->prepare("SELECT * FROM contract WHERE seller1= ?;");
-                $contract->execute(array($_SESSION['seller1']));
-                $contract2 = $contract->fetch();
-                
-                
-                $_SESSION['contract_id'] = $contract2['contract_id'];
-                $_SESSION['buyer1'] = $contract2['buyer1'];
-                $_SESSION['buyer2'] = $contract2['buyer2'];
-                $_SESSION['purchaseprice'] = $contract2['purchaseprice'];
-                $_SESSION['earnestmoney'] = $contract2['earnestmoney'];
-                $_SESSION['financed'] = $contract2['financed'];
-                $_SESSION['additionaldown'] = $contract2['additionaldown'];
-                $_SESSION['earnestmoneyform'] = $contract2['earnestmoneyform'];
-                $_SESSION['earnestmoneyheld'] = $contract2['earnestmoneyheld'];
-                $_SESSION['coedate'] = $contract2['coedate'];
-                $_SESSION['buyercontingency'] = $contract2['buyercontingency'];
-                $_SESSION['waterwell'] = $contract2['waterwell'];
-                $_SESSION['leadpaint'] = $leadpaint;
-                $_SESSION['hoa'] = $contract2['hoa'];
-                $_SESSION['loanassuption'] = $contract2['loanassuption'];
-                $_SESSION['onsitewastewater'] = $contract2['onsitewastewater'];
-                $_SESSION['sellerfinancing'] = $contract2['sellerfinancing'];
-                $_SESSION['shortsale'] = $contract2['shortsale'];
-                $_SESSION['other'] = $contract2['other'];
-                $_SESSION['refrigerator'] = $contract2['refrigerator'];
-                $_SESSION['washer'] = $contract2['washer'];
-                $_SESSION['dryer'] = $contract2['dryer'];
-                $_SESSION['spa'] = $contract2['spa'];
-                $_SESSION['personalprop'] = $contract2['personalprop'];
-                $_SESSION['personalprop2'] = $contract2['personalprop2'];
-                $_SESSION['financing'] = $contract2['financing'];
-                $_SESSION['sellerconsessionspercent'] = $contract2['sellerconsessionspercent'];
-                $_SESSION['sellerconsessionsdollar'] = $contract2['sellerconsessionsdollar'];
-                $_SESSION['homewarrantyorderedby'] = $contract2['homewarrantyorderedby'];
-                $_SESSION['homewarrantypaidby'] = $contract2['homewarrantypaidby'];
-                $_SESSION['homewarrantyamount'] = $contract2['homewarrantyamount'];
-                $_SESSION['additionalterms'] = $contract2['additionalterms'];
-                $_SESSION['accepttime'] = $contract2['accepttime'];
-        
-                if($_SESSION['buyercontingency'] == "1"){
-                  $_SESSION['buyercontingencycheck'] = " checked";
-                }else{
-                  $_SESSION['buyercontingencycheck'] ="";
-                }
-        
-                if($_SESSION['waterwell'] == "1"){
-                  $_SESSION['waterwellcheck'] = " checked";
-                }else{
-                  $_SESSION['waterwellcheck'] ="";
-                }
-        
-                if($_SESSION['hoa'] == "1"){
-                  $_SESSION['hoacheck'] = " checked";
-                }else{
-                  $_SESSION['hoacheck'] ="";
-                }
-        
-                if($_SESSION['loanassuption'] == "1"){
-                  $_SESSION['loanassuptioncheck'] = " checked";
-                }else{
-                  $_SESSION['loanassuptioncheck'] ="";
-                }
-        
-                if($_SESSION['sellerfinancing'] == "1"){
-                  $_SESSION['sellerfinancingcheck'] = " checked";
-                }else{
-                  $_SESSION['sellerfinancingcheck'] ="";
-                }
-        
-                if($_SESSION['shortsale'] == "1"){
-                  $_SESSION['shortsalecheck'] = " checked";
-                }else{
-                  $_SESSION['shortsalecheck'] ="";
-                }
-        
-                if($_SESSION['other'] == "1"){
-                  $_SESSION['othercheck'] = " checked";
-                }else{
-                  $_SESSION['othercheck'] ="";
-                }
-        
-                if($_SESSION['refrigerator'] == "1"){
-                  $_SESSION['refrigeratorcheck'] = " checked";
-                }else{
-                  $_SESSION['refrigeratorcheck'] ="";
-                }
-        
-                if($_SESSION['washer'] == "1"){
-                  $_SESSION['washercheck'] = " checked";
-                }else{
-                  $_SESSION['washercheck'] ="";
-                }
-        
-                if($_SESSION['dryer'] == "1"){
-                  $_SESSION['dryercheck'] = " checked";
-                }else{
-                  $_SESSION['dryercheck'] ="";
-                }
-        
-                if($_SESSION['spa'] == "1"){
-                  $_SESSION['spacheck'] = " checked";
-                }else{
-                  $_SESSION['spacheck'] ="";
-                }
-        
-                $_SESSION['cash'] = "";
-                $_SESSION['conventional'] = "";
-                $_SESSION['fha'] = "";
-                $_SESSION['va'] = "";
-                $_SESSION['usda'] = "";
-                $_SESSION['assumption'] = "";
-                $_SESSION['sellercarryback'] = "";
-        
-                switch ($_SESSION['financing']) {
-                  case "Cash":
-                    $_SESSION['cash'] = "checked";
-                    break;
-                  case "Conventional":
-                    $_SESSION['conventional'] = "checked";
-                    break;
-                  case "FHA":
-                    $_SESSION['fha'] = "checked";
-                    break;
-                  case "VA":
-                    $_SESSION['va'] = "checked";
-                    break;
-                  case "USDA":
-                    $_SESSION['usda'] = "checked";
-                    break;
-                  case "Assumption":
-                    $_SESSION['assumption'] = "checked";
-                    break;
-                  case "Seller Carryback":
-                    $_SESSION['sellercarryback'] = "checked";
-                    break;
-                }
-        
-                if($_SESSION['homewarrantyorderedby'] == "Buyer"){
-                  $_SESSION['homewarrantyorderedbybuyercheck'] = " checked";
-                }else{
-                  $_SESSION['homewarrantyorderedbybuyercheck'] ="";
-                }
-        
-                if($_SESSION['homewarrantyorderedby'] == "Seller"){
-                  $_SESSION['homewarrantyorderedbysellercheck'] = " checked";
-                }else{
-                  $_SESSION['homewarrantyorderedbysellercheck'] ="";
-                }
-        
-                if($_SESSION['homewarrantypaidby'] == "Buyer"){
-                  $_SESSION['homewarrantypaidbybuyercheck'] = " checked";
-                }else{
-                  $_SESSION['homewarrantypaidbybuyercheck'] ="";
-                }
-        
-                if($_SESSION['homewarrantypaidby'] == "Seller"){
-                  $_SESSION['homewarrantypaidbysellercheck'] = " checked";
-                }else{
-                  $_SESSION['homewarrantypaidbysellercheck'] ="";
-                }
-                
+                LoadContracts::loadbasecontract();
+     
                 
             if($_GET["buyeragentname"] != null){
                    (new SqlUpadates())->UpdateBuyerAgent();
@@ -533,48 +402,8 @@ session_start();
                 
                 
               if($_GET["agentname"] != ""){
-                $sqlupadateagent = "UPDATE agent SET agentname = :agentname, agentlicense = :agentlicense, agentname2 = :agentname2, agentlicense2 = :agentlicense2, firmname = :firmname, firmaddress = :firmaddress, firmlicense = :firmlicense, firmphone = :firmphone, agentemail = :agentemail
-                                    WHERE agentid = :agentid";
-                $s = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-                $stmtupdateagent = $s->prepare($sqlupadateagent);
-                $stmtupdateagent->execute(array(
-                  ':agentid' => $_SESSION['selleragentid'],
-                  ':agentname' => $_GET["agentname"],
-                  ':agentlicense' => $_GET["agentlicense"],
-                  ':agentname2' => $_GET["agentname2"],
-                  ':agentlicense2' => $_GET["agentlicense2"],
-                  ':firmname' => $_GET["firmname"],
-                  ':firmaddress' => $_GET["firmaddress"],
-                  ':firmlicense' => $_GET["firmlicense"],
-                  ':firmphone' => $_GET["firmphone"],
-                  ':agentemail' => $_GET["agentemail"]));
-        /*
-                  $agent = $pdo->query("SELECT * FROM agent WHERE agentname='{$_GET["agentname"]}';")->fetch();  //preparethis
-                 */
-                  $agent = $pdo->query("SELECT * FROM agent WHERE agentname= ? ;");
-                  $agent->execute(array($_GET["agentname"]));
-                  $agent2 = $agent->fetchALL();
-                 
-                  
-                  /* $name use this is for any other session var */
-                  $_SESSION['agentlicense'] = $agent2['agentlicense'];
-                  $_SESSION['agentname2'] = $agent2['agentname2'];
-                  $_SESSION['agentlicense2'] = $agent2['agentlicense2'];
-                  $_SESSION['firmname'] = $agent2['firmname'];
-                  $_SESSION['firmaddress'] = $agent2['firmaddress'];
-                  $_SESSION['firmlicense'] = $agent2['firmlicense'];
-                  $_SESSION['firmphone'] = $agent2['firmphone'];
-                  $_SESSION['agentemail'] = $agent2['agentemail'];
-                  $_SESSION['selleragentid'] = $agent2['agentid'];
-        
-                  $_SESSION['agentmessage'] = "Has An Agent";
-                  $_SESSION['agentdisabled'] = "";
-        
-                  $sqlselleragent = "UPDATE contract SET selleragentid = :selleragentid WHERE contract_id = :contract_id";
-                  $stmtselleragent = $s->prepare($sqlselleragent);
-                  $stmtselleragent->execute(array(
-                  ':selleragentid' => $_SESSION['selleragentid'],
-                  ':contract_id' => $_SESSION['contract_id']));
+
+            SqlUpadates::UpdateSellerAgent();
              //  header("Location: http://confirm.azrealestatehelper.com", 302);
                 exit();
               }else{
@@ -600,57 +429,376 @@ session_start();
         }
         
 class LoadContracts{
-        function loadresponsecontracts(){
+       
+        public static function loaduserview(){
+                        require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+            $whowaslast =   $pdo->query("SELECT createdby, sent
+            FROM contract
+            WHERE property_id = '{$_SESSION['property_id']}'
+            ORDER BY contract_id DESC
+            LIMIT 1;")->fetch();
+            
+            $_SESSION['createdby'] = $whowaslast['createdby'];  
+            $_SESSION['sent'] = $whowaslast['sent'];
+            
+            $_POST["saved"] == '' ? $_SESSION['buyerseller'] = 1 : $_SESSION['buyerseller'] = 0;
+            /* who is logged in, who created the last contract, was it sent:  buyer:0 seller:1 sent:bool */
+            $_SESSION['userview'] = $_SESSION['buyerseller'].$_SESSION['createdby'].$_SESSION['sent'];
+            
+            if(in_array($_SESSION['userview'], ['110', '000'], true)){
+                $_SESSION['counter'] = 1;
+                }else{$_SESSION['counter'] = "";}
+    
+        }
+        
+        
+        public static function loadbuyeragent(){
+            
+            require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+            
+              $buyeragentvars = $pdo->query("SELECT * FROM contract WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+              $_SESSION['buyeragentid'] = $buyeragentvars['buyeragentid'];
+            
+            $agent = $pdo->prepare("SELECT * FROM agent WHERE agentid= ?;");
+                $agent->execute(array($_SESSION['buyeragentid']));
+                $agent2 = $agent->fetch();
+                
+                
+                /* $name use this is for any other session var */
+                $_SESSION['buyeragentname'] = $agent2['agentname'];
+                $_SESSION['buyeragentlicense'] = $agent2['agentlicense'];
+                $_SESSION['buyeragentname2'] = $agent2['agentname2'];
+                $_SESSION['buyeragentlicense2'] = $agent2['agentlicense2'];
+                $_SESSION['buyerfirmname'] = $agent2['firmname'];
+                $_SESSION['buyerfirmaddress'] = $agent2['firmaddress'];
+                $_SESSION['buyerfirmlicense'] = $agent2['firmlicense'];
+                $_SESSION['buyerfirmphone'] = $agent2['firmphone'];
+                $_SESSION['buyeragentemail'] = $agent2['agentemail'];
+                $_SESSION['buyeragentid'] = $agent2['agentid'];
+        }
+        
+        public static function loadselleragent(){
+            
+            require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+            
+              $selleragentvars = $pdo->query("SELECT * FROM contract WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+              $_SESSION['selleragentid'] = $selleragentvars['selleragentid'];
+            
+                  $agent = $pdo->prepare("SELECT * FROM agent WHERE agentid = ? ;");
+                  $agent->execute(array($_SESSION['selleragentid']));
+                  $agent2 = $agent->fetch();
+                 
+                  
+                  /* $name use this is for any other session var */
+                  $_SESSION['agentname'] = $agent2['agentname'];
+                  $_SESSION['agentlicense'] = $agent2['agentlicense'];
+                  $_SESSION['agentname2'] = $agent2['agentname2'];
+                  $_SESSION['agentlicense2'] = $agent2['agentlicense2'];
+                  $_SESSION['firmname'] = $agent2['firmname'];
+                  $_SESSION['firmaddress'] = $agent2['firmaddress'];
+                  $_SESSION['firmlicense'] = $agent2['firmlicense'];
+                  $_SESSION['firmphone'] = $agent2['firmphone'];
+                  $_SESSION['agentemail'] = $agent2['agentemail'];
+                  $_SESSION['selleragentid'] = $agent2['agentid'];
+        
+                  $_SESSION['agentmessage'] = "Has An Agent";
+                  $_SESSION['agentdisabled'] = "";
+        }
+        
+        
+        public static function loadbinsrvars(){
+            require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+             $binsrvars = $pdo->query("SELECT * FROM contract WHERE property_id = '{$_SESSION['property_id']}' ORDER BY contract_id ASC LIMIT 1;")->fetch();   
+    
+    
+            $_SESSION['binsr0'] = $binsrvars['binsr0'];
+            $_SESSION['binsr1'] = $binsrvars['binsr1'];
+            $_SESSION['binsr2'] = $binsrvars['binsr2'];
+            $_SESSION['binsr3'] = $binsrvars['binsr3'];
+            $_SESSION['binsr4'] = $binsrvars['binsr4'];
+            $_SESSION['binsr5'] = $binsrvars['binsr5'];
+            $_SESSION['binsr6'] = $binsrvars['binsr6'];
+            $_SESSION['binsr7'] = $binsrvars['binsr7'];
+            $_SESSION['binsr8'] = $binsrvars['binsr8'];
+            $_SESSION['binsr9'] = $binsrvars['binsr9'];
+        }
+        
+        
+        public static function loaddealvars(){
+              require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+            $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+    
+            $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
+            $_SESSION['deal_id'] = $dealvars['deal_id'];
+            $_SESSION['date'] = $dealvars['date'];
+            $_SESSION['sent'] = $dealvars['sent'];
+            $_SESSION['accepted'] = $dealvars['accepted'];
+            $_SESSION['inspection'] = $dealvars['inspection'];
+            $_SESSION['insurance'] = $dealvars['insurance'];
+            $_SESSION['financing2'] = $dealvars['financing2'];
+            $_SESSION['complete'] = $dealvars['complete'];
+    
+            $_SESSION['sent'] == 1 ? $_SESSION['sentcheck'] = ' checked' : $_SESSION['sentcheck'] = '';
+            $_SESSION['accepted'] == 1 ? $_SESSION['acceptedcheck'] = ' checked' : $_SESSION['acceptedcheck'] = '';
+            $_SESSION['inspection'] == 1 ? $_SESSION['inspectioncheck'] = ' checked' : $_SESSION['inspectioncheck'] = '';
+            $_SESSION['insurance'] == 1 ? $_SESSION['insurancecheck'] = ' checked' : $_SESSION['insurancecheck'] = '';
+            $_SESSION['financing2'] == 1 ? $_SESSION['financingcheck2'] = ' checked' : $_SESSION['financingcheck2'] = '';
+            $_SESSION['complete'] == 1 ? $_SESSION['completecheck'] = ' checked' : $_SESSION['completecheck'] = '';
+        }
+    
+    
+        public static function loadproperty(){
+            require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+            $name = $pdo->prepare("SELECT * FROM property
+                INNER JOIN contract ON property.property_id=contract.property_id
+                WHERE contract.property_id= ?;");
+            $name->execute(array($_SESSION['property_id']));
+            $name2 = $name->fetch();
+    
+    
+            /* $name use this is for any other session var */
+            $_SESSION['seller1'] = $name2['owner1'];
+            $_SESSION['seller2'] = $name2['owner2'];
+            $_SESSION['address'] = $name2['address'];
+            $_SESSION['city'] = $name2['city'];
+            $_SESSION['county'] = $name2['county'];
+            $_SESSION['zip'] = $name2['zip'];
+            $_SESSION['assessornum'] = $name2['assessornum'];
+            $_SESSION['legaldisc'] = $name2['legaldisc'];
+            $_SESSION['yearbuilt'] = $name2['yearbuilt'];
+            $_SESSION['sewer'] = $name2['sewer'];
+            
+        }
+        
+        public static function loadbasecontract(){
+                require "php/pass.php";
+            $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+            $con = $pdo->prepare("SELECT * FROM contract WHERE contract_id='{$_SESSION['contract_id']}';");
+            $con->execute(array($_SESSION['contract_id']));
+            $contract = $con->fetch();
+            
+            
+           
+            $_SESSION['sent'] = $contract['sent'];
+            $_SESSION['property_id'] = $contract['property_id'];
+            $_SESSION['buyer1'] = $contract['buyer1'];
+            $_SESSION['buyer2'] = $contract['buyer2'];
+            $_SESSION['purchaseprice'] = $contract['purchaseprice'];
+            $_SESSION['earnestmoney'] = $contract['earnestmoney'];
+            $_SESSION['additionaldown'] = $contract['additionaldown'];
+            $_SESSION['financed'] = $contract['financed'];
+            $_SESSION['earnestmoneyform'] = $contract['earnestmoneyform'];
+            $_SESSION['earnestmoneyheld'] = $contract['earnestmoneyheld'];
+            $_SESSION['coedate'] = $contract['coedate'];
+            $_SESSION['buyercontingency'] = $contract['buyercontingency'];
+            $_SESSION['waterwell'] = $contract['waterwell'];
+            $_SESSION['hoa'] = $contract['hoa'];
+            $_SESSION['loanassuption'] = $contract['loanassuption'];
+            $_SESSION['onsitewastewater'] = $contract['onsitewastewater'];
+            $_SESSION['sellerfinancing'] = $contract['sellerfinancing'];
+            $_SESSION['shortsale'] = $contract['shortsale'];
+            $_SESSION['other'] = $contract['other'];
+            $_SESSION['leadpaint'] = ($contract['leadpaint'] == 0) ? '' : 'X';
+            $_SESSION['refrigerator'] = $contract['refrigerator'];
+            $_SESSION['washer'] = $contract['washer'];
+            $_SESSION['dryer'] = $contract['dryer'];
+            $_SESSION['spa'] = $contract['spa'];
+            $_SESSION['personalprop'] = $contract['personalprop'];
+            $_SESSION['personalprop2'] = $contract['personalprop2'];
+            $_SESSION['financing'] = $contract['financing'];
+            $_SESSION['sellerconsessionspercent'] = $contract['sellerconsessionspercent'];
+            $_SESSION['sellerconsessionsdollar'] = $contract['sellerconsessionsdollar'];
+            $_SESSION['homewarrantyorderedby'] = $contract['homewarrantyorderedby'];
+            $_SESSION['homewarrantypaidby'] = $contract['homewarrantypaidby'];
+            $_SESSION['homewarrantyamount'] = $contract['homewarrantyamount'];
+            $_SESSION['additionalterms'] = $contract['additionalterms'];
+            $_SESSION['accepttime'] = $contract['accepttime'];
+            $_SESSION['selleragentid'] = $contract['selleragentid'];
+        
+        
+            if($_SESSION['buyercontingency'] == "1"){
+              $_SESSION['buyercontingencycheck'] = " checked";
+            }else{
+              $_SESSION['buyercontingencycheck'] ="";
+            }
+        
+            if($_SESSION['waterwell'] == "1"){
+              $_SESSION['waterwellcheck'] = " checked";
+            }else{
+              $_SESSION['waterwellcheck'] ="";
+            }
+        
+            if($_SESSION['hoa'] == "1"){
+              $_SESSION['hoacheck'] = " checked";
+            }else{
+              $_SESSION['hoacheck'] ="";
+            }
+        
+            if($_SESSION['loanassuption'] == "1"){
+              $_SESSION['loanassuptioncheck'] = " checked";
+            }else{
+              $_SESSION['loanassuptioncheck'] ="";
+            }
+        
+            if($_SESSION['sellerfinancing'] == "1"){
+              $_SESSION['sellerfinancingcheck'] = " checked";
+            }else{
+              $_SESSION['sellerfinancingcheck'] ="";
+            }
+        
+            if($_SESSION['shortsale'] == "1"){
+              $_SESSION['shortsalecheck'] = " checked";
+            }else{
+              $_SESSION['shortsalecheck'] ="";
+            }
+        
+            if($_SESSION['other'] == "1"){
+              $_SESSION['othercheck'] = " checked";
+            }else{
+              $_SESSION['othercheck'] ="";
+            }
+        
+            if($_SESSION['refrigerator'] == "1"){
+              $_SESSION['refrigeratorcheck'] = " checked";
+            }else{
+              $_SESSION['refrigeratorcheck'] ="";
+            }
+        
+            if($_SESSION['washer'] == "1"){
+              $_SESSION['washercheck'] = " checked";
+            }else{
+              $_SESSION['washercheck'] ="";
+            }
+        
+            if($_SESSION['dryer'] == "1"){
+              $_SESSION['dryercheck'] = " checked";
+            }else{
+              $_SESSION['dryercheck'] ="";
+            }
+        
+            if($_SESSION['spa'] == "1"){
+              $_SESSION['spacheck'] = " checked";
+            }else{
+              $_SESSION['spacheck'] ="";
+            }
+        
+            $_SESSION['cash'] = "";
+            $_SESSION['conventional'] = "";
+            $_SESSION['fha'] = "";
+            $_SESSION['va'] = "";
+            $_SESSION['usda'] = "";
+            $_SESSION['assumption'] = "";
+            $_SESSION['sellercarryback'] = "";
+        
+            switch ($_SESSION['financing']) {
+              case "Cash":
+                $_SESSION['cash'] = "checked";
+                break;
+              case "Conventional":
+                $_SESSION['conventional'] = "checked";
+                break;
+              case "FHA":
+                $_SESSION['fha'] = "checked";
+                break;
+              case "VA":
+                $_SESSION['va'] = "checked";
+                break;
+              case "USDA":
+                $_SESSION['usda'] = "checked";
+                break;
+              case "Assumption":
+                $_SESSION['assumption'] = "checked";
+                break;
+              case "Seller Carryback":
+                $_SESSION['sellercarryback'] = "checked";
+                break;
+            }
+        
+            $_SESSION['earnestmoneyformcheck'] = "";
+            $_SESSION['earnestmoneyformwire'] = "";
+            $_SESSION['earnestmoneyheldbroker'] = "";
+            $_SESSION['earnestmoneyheldescrow'] = "";
+            $_SESSION['sewercheck'] = "";
+            $_SESSION['septiccheck'] = "";
+            
+            switch ($_SESSION['onsitewastewater']){
+                case "0":
+                    $_SESSION['sewercheck'] = " checked";
+                    break;
+                case "1":
+                    $_SESSION['septiccheck'] = " checked";
+                    break;
+            }
+            
+                switch ($_SESSION['earnestmoneyform']){
+                  case "Wire":
+                    $_SESSION['earnestmoneyformwire'] = " checked";
+                    break;
+                  case "Check":
+                    $_SESSION['earnestmoneyformcheck'] = " checked";
+                }
+                
+                switch ($_SESSION['earnestmoneyheld']){
+                    case "Broker":
+                        $_SESSION['earnestmoneyheldbroker'] = " checked";
+                        break;
+                    case "Escrow":
+                        $_SESSION['earnestmoneyheldescrow'] = " checked";
+                        break;
+                }
+            if($_SESSION['homewarrantyorderedby'] == "Buyer"){
+              $_SESSION['homewarrantyorderedbybuyercheck'] = " checked";
+            }else{
+              $_SESSION['homewarrantyorderedbybuyercheck'] ="";
+            }
+        
+            if($_SESSION['homewarrantyorderedby'] == "Seller"){
+              $_SESSION['homewarrantyorderedbysellercheck'] = " checked";
+            }else{
+              $_SESSION['homewarrantyorderedbysellercheck'] ="";
+            }
+        
+            if($_SESSION['homewarrantypaidby'] == "Buyer"){
+              $_SESSION['homewarrantypaidbybuyercheck'] = " checked";
+            }else{
+              $_SESSION['homewarrantypaidbybuyercheck'] ="";
+            }
+        
+            if($_SESSION['homewarrantypaidby'] == "Seller"){
+              $_SESSION['homewarrantypaidbysellercheck'] = " checked";
+            }else{
+              $_SESSION['homewarrantypaidbysellercheck'] ="";
+            }
+        }
+    
+        static public function loadresponsecontracts(){
             require "php/pass.php";
             $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
            if(isset($_POST['propertyid'])){$_SESSION['property_id'] = $_POST['propertyid'];};
           
-            
-           /* $binsrvars = $pdo->query("SELECT * FROM contract WHERE property_id = '{$_SESSION['propertyid']}' ORDER BY contract_id ASC LIMIT 1;")->fetch();  */  //preparethisdone
-            
-            
-            $binsrvars = $pdo->prepare("SELECT * FROM contract WHERE property_id = ? ORDER BY contract_id ASC LIMIT 1;"); 
-            $binsrvars->execute(array($_SESSION['property_id']));
-           $binsrvars2 = $binsrvars->fetchAll();
-    
-            $_SESSION['binsr0'] = $binsrvars2['binsr0'];
-            $_SESSION['binsr1'] = $binsrvars2['binsr1'];
-            $_SESSION['binsr2'] = $binsrvars2['binsr2'];
-            $_SESSION['binsr3'] = $binsrvars2['binsr3'];
-            $_SESSION['binsr4'] = $binsrvars2['binsr4'];
-            $_SESSION['binsr5'] = $binsrvars2['binsr5'];
-            $_SESSION['binsr6'] = $binsrvars2['binsr6'];
-            $_SESSION['binsr7'] = $binsrvars2['binsr7'];
-            $_SESSION['binsr8'] = $binsrvars2['binsr8'];
-            $_SESSION['binsr9'] = $binsrvars2['binsr9'];
+            LoadContracts::loadbinsrvars();
    
 
       $contract2 = $pdo->prepare("SELECT * FROM contract WHERE property_id = :xyz;");
       /*MIGHT NEED TO CHANGE FROM POST TO SESSION BY WHERE IT CAME FROM
       
       THERE IS ANOTHER POST ID ON 785ISH*/
+      
+     
       $contract2->execute(array(':xyz' => $_SESSION['property_id']));
       $address2 = $pdo->prepare("SELECT * FROM property INNER JOIN contract
                                 ON property.property_id = contract.property_id
                                 WHERE contract_id = :zxy;");
                                 
-        $whowaslast =   $pdo->query("SELECT createdby, sent
-                FROM contract
-                WHERE property_id = '{$_SESSION['property_id']}'
-                ORDER BY createdby DESC
-                LIMIT 1;")->fetch(); //no user input don't need to prepare
-        $_SESSION['sent'] = $whowaslast['sent'];
-        $_SESSION['createdby'] = $whowaslast['createdby'];
-   
-        $_SESSION['userview'] = $_SESSION['buyerseller'].$_SESSION['createdby'].$_SESSION['sent'];
+                                
+                             
 
-             
-                    
-      $inc = 10; /* 10 because lower contract ids might be set from landing script*/
-       while(isset($_SESSION['contract_id' .$inc])){
-           unset($_SESSION['contract_id' .$inc]);
-           $inc++;
-       }
     /* sets unlimited contract ids so the user can choose which one to work on */
     $inc = 10;
       while($row = $contract2->fetch(PDO::FETCH_ASSOC)) {
@@ -699,21 +847,6 @@ class LoadContracts{
      //   $_SESSION['buyeragentid'] = $row['buyeragentid'];
         $_SESSION['accepttimedate' .$inc] = date_create($_SESSION['accepttime' .$inc]);
         
-       
-       /* 
-        if($_SESSION['selleragentid' .$inc] == ""){
-          unset($_SESSION['agentname' .$inc]);
-       
-          unset($_SESSION['agentlicense' .$inc]);
-          unset($_SESSION['agentname2' .$inc]);
-          unset($_SESSION['agentlicense2' .$inc]);
-          unset($_SESSION['firmname' .$inc]);
-          unset($_SESSION['firmaddress' .$inc]);
-          unset($_SESSION['firmlicense' .$inc]);
-          unset($_SESSION['firmphone' .$inc]);
-          unset($_SESSION['agentemail' .$inc]);
-         
-        }*/
     
         if($_SESSION['buyercontingency' .$inc] == "1"){
           $_SESSION['buyercontingencycheck' .$inc] = " checked";
@@ -871,27 +1004,18 @@ class LoadContracts{
           $_SESSION['homewarrantypaidbysellercheck' .$inc] ="";
         }
     
+    $inc++;
+        $_SESSION['inc']++;
+      }
+    
     $buyeragentvars = $pdo->query("SELECT * FROM contract WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
               $_SESSION['buyeragentid'] = $buyeragentvars['buyeragentid'];
               $_SESSION['selleragentid'] = $buyeragentvars['selleragentid'];
     
     if($_SESSION['buyeragentid'] != null){
-    
-    $agent = $pdo->prepare("SELECT * FROM agent WHERE agentid= ?;");
-                $agent->execute(array($_SESSION['buyeragentid']));
-                $agent2 = $agent->fetch();
-                
-                
-                /* $name use this is for any other session var */
-                $_SESSION['buyeragentlicense'] = $agent2['agentlicense'];
-                $_SESSION['buyeragentname2'] = $agent2['agentname2'];
-                $_SESSION['buyeragentlicense2'] = $agent2['agentlicense2'];
-                $_SESSION['buyerfirmname'] = $agent2['firmname'];
-                $_SESSION['buyerfirmaddress'] = $agent2['firmaddress'];
-                $_SESSION['buyerfirmlicense'] = $agent2['firmlicense'];
-                $_SESSION['buyerfirmphone'] = $agent2['firmphone'];
-                $_SESSION['buyeragentemail'] = $agent2['agentemail'];
-                $_SESSION['buyeragentid'] = $agent2['agentid'];
+        LoadContracts::loadbuyeragent();
+        
+
     }else{
         unset ($_SESSION['buyeragentlicense']);
                   unset ($_SESSION['buyeragentname2']);
@@ -906,49 +1030,9 @@ class LoadContracts{
     }
     
     if($_SESSION['selleragentid'] != ""){
-        $agent = $pdo->query("SELECT * FROM agent
-                              INNER JOIN contract ON agent.agentid=contract.selleragentid
-                              WHERE agent.agentid='{$_SESSION['selleragentid']}';")->fetch();
-        /* $name use this is for any other session var  INNERJOIN-----------------------*/
-        $_SESSION['agentname'] = $agent['agentname'];
-        $_SESSION['agentlicense'] = $agent['agentlicense'];
-        $_SESSION['agentname2'] = $agent['agentname2'];
-        $_SESSION['agentlicense2'] = $agent['agentlicense2'];
-        $_SESSION['firmname'] = $agent['firmname'];
-        $_SESSION['firmaddress'] = $agent['firmaddress'];
-        $_SESSION['firmlicense'] = $agent['firmlicense'];
-        $_SESSION['firmphone'] = $agent['firmphone'];
-        $_SESSION['agentemail'] = $agent['agentemail'];
-    
-        $_SESSION['agentbutton'] = "show";
-        $_SESSION['agentmessage'] = "Have An Agent";
-        $_SESSION['agentdisabled'] = "";
+        LoadContracts::loadselleragent();
         
-        /*
-        
-        
-    
-        $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch(); //no need to preparethis  user input controlled
-
-            $_SESSION['deal_id'] = $dealvars['deal_id'];
-            $_SESSION['date'] = $dealvars['date'];
-            $_SESSION['sent'] = $dealvars['sent'];
-            $_SESSION['accepted'] = $dealvars['accepted'];
-            $_SESSION['inspection'] = $dealvars['inspection'];
-            $_SESSION['insurance'] = $dealvars['insurance'];
-            $_SESSION['financing2'] = $dealvars['financing2'];
-            $_SESSION['complete'] = $dealvars['complete'];
-    
-            $_SESSION['sent'] == 1 ? $_SESSION['sentcheck'] = ' checked' : $_SESSION['sentcheck'] = '';
-            $_SESSION['accepted'] == 1 ? $_SESSION['acceptedcheck'] = ' checked' : $_SESSION['acceptedcheck'] = '';
-            $_SESSION['inspection'] == 1 ? $_SESSION['inspectioncheck'] = ' checked' : $_SESSION['inspectioncheck'] = '';
-            $_SESSION['insurance'] == 1 ? $_SESSION['insurancecheck'] = ' checked' : $_SESSION['insurancecheck'] = '';
-            $_SESSION['financing2'] == 1 ? $_SESSION['financingcheck2'] = ' checked' : $_SESSION['financingcheck2'] = '';
-            $_SESSION['complete'] == 1 ? $_SESSION['completecheck'] = ' checked' : $_SESSION['completecheck'] = '';
-            
-    
-         */
- 
+       
             
             }else{
               $_SESSION['selleragentid'] = NULL;
@@ -972,48 +1056,13 @@ class LoadContracts{
               unset($_SESSION['agentemail']);
             }
     
+    LoadContracts::loaddealvars();
     
-    
-        $inc++;
-        $_SESSION['inc']++;
-    
-        $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch(); //no need to prepare
-    
-           
-            $_SESSION['deal_id'] = $dealvars['deal_id'];
-            $_SESSION['date'] = $dealvars['date'];
-            $_SESSION['sent'] = $dealvars['sent'];
-            $_SESSION['accepted'] = $dealvars['accepted'];
-            $_SESSION['inspection'] = $dealvars['inspection'];
-            $_SESSION['insurance'] = $dealvars['insurance'];
-            $_SESSION['financing2'] = $dealvars['financing2'];
-            $_SESSION['complete'] = $dealvars['complete'];
-    
-            $_SESSION['sent'] == 1 ? $_SESSION['sentcheck'] = ' checked' : $_SESSION['sentcheck'] = '';
-            $_SESSION['accepted'] == 1 ? $_SESSION['acceptedcheck'] = ' checked' : $_SESSION['acceptedcheck'] = '';
-            $_SESSION['inspection'] == 1 ? $_SESSION['inspectioncheck'] = ' checked' : $_SESSION['inspectioncheck'] = '';
-            $_SESSION['insurance'] == 1 ? $_SESSION['insurancecheck'] = ' checked' : $_SESSION['insurancecheck'] = '';
-            $_SESSION['financing2'] == 1 ? $_SESSION['financingcheck2'] = ' checked' : $_SESSION['financingcheck2'] = '';
-            $_SESSION['complete'] == 1 ? $_SESSION['completecheck'] = ' checked' : $_SESSION['completecheck'] = '';
-            
-       $whowaslast =   $pdo->query("SELECT createdby, sent
-            FROM contract
-            WHERE property_id = '{$_SESSION['property_id']}'
-            ORDER BY contract_id DESC
-            LIMIT 1;")->fetch(); //no need to prepare, no usr input
-            $_SESSION['createdby'] = $whowaslast['createdby'];  
-            $_SESSION['sent'] = $whowaslast['sent'];
-            
-            /* who is logged in, who created the last contract, was it sent:  buyer:0 seller:1 sent:bool */
-            $_SESSION['userview'] = $_SESSION['buyerseller'].$_SESSION['createdby'].$_SESSION['sent'];
-            
-            $_SESSION['buyerseller'] == $_SESSION['createdby'] ? $_SESSION['usercreated'] = 1 : $_SESSION['usercreated'] = 0;
-              if(in_array($_SESSION['userview'], [110, "000"])){
-                    $_SESSION['counter'] = 1;
-                    }else{$_SESSION['counter'] = "";}
-    
+       /*-------------------USER VIEW---------------------------*/     
+         LoadContracts::loaduserview(); 
+     /*-------------------USER VIEW---------------------------*/ 
       
-        }
+        
             }
     }
 
