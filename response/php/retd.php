@@ -68,19 +68,10 @@ if(isset($_POST["sendbinsr"])) {
           ':binsr8' => $_POST["binsr8"],
           ':binsr9' => $_POST["binsr9"]
           ));
-     $binsrvars = $pdo->query("SELECT * FROM contract WHERE property_id = '{$_SESSION['property_id']}' ORDER BY contract_id ASC LIMIT 1;")->fetch();   
-    
-    
-            $_SESSION['binsr0'] = $binsrvars['binsr0'];
-            $_SESSION['binsr1'] = $binsrvars['binsr1'];
-            $_SESSION['binsr2'] = $binsrvars['binsr2'];
-            $_SESSION['binsr3'] = $binsrvars['binsr3'];
-            $_SESSION['binsr4'] = $binsrvars['binsr4'];
-            $_SESSION['binsr5'] = $binsrvars['binsr5'];
-            $_SESSION['binsr6'] = $binsrvars['binsr6'];
-            $_SESSION['binsr7'] = $binsrvars['binsr7'];
-            $_SESSION['binsr8'] = $binsrvars['binsr8'];
-            $_SESSION['binsr9'] = $binsrvars['binsr9'];
+    $c = "/classes.php";
+   require_once dirname("/home/knapp62/public_html/response/index.php", 2).$c;
+          LoadContracts::loadbinsrvars();
+
     header("Location: http://response.azrealestatehelper.com", 302);
     exit();   
 }
@@ -110,15 +101,14 @@ $c = "/classes.php";
 /* UPDATE DEAL BUTTON NOT COMPLETE----------innerjoin */
     if(isset($_POST['update'])){
     
-    
-    
+
     $dealvars = $pdo->query("SELECT * FROM deal WHERE deal.contract_id = '{$_SESSION['contract_id']}';")->fetch();
        if(!isset($dealvars['deal_id'])){
     
     $deal = "INSERT INTO deal (date, sent, accepted, inspection, insurance,       financing2, complete, user_id, contract_id)
          VALUES (:date, :sent, :accepted, :inspection, :insurance, :financing2, :complete, :user_id, :contract_id)";
-         $s = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-      $stmt = $s->prepare($deal);
+         $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+      $stmt = $pdo->prepare($deal);
       $stmt->execute(array(
         ':date' => date("Y-m-d"),
         ':sent' => $_POST["sent"],
@@ -134,8 +124,8 @@ $c = "/classes.php";
     $deal = "UPDATE deal SET date = :date, sent = :sent,  accepted = :accepted, inspection = :inspection, insurance = :insurance, financing2 = :financing2, complete = :complete, user_id = :user_id, contract_id = :contract_id WHERE deal_id = :deal_id;";
        
     
-      $s = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-      $stmt = $s->prepare($deal);
+      $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
+      $stmt = $pdo->prepare($deal);
       $stmt->execute(array(
         ':date' => date("Y-m-d"),
         ':sent' => $_POST["sent"],
@@ -150,30 +140,18 @@ $c = "/classes.php";
         ));
         
         }
-        $dealvars = $pdo->query("SELECT * FROM deal WHERE deal.contract_id = '{$_SESSION['contract_id']}';")->fetch();
-        $_SESSION['deal_id'] = $dealvars['deal_id'];
-        $_SESSION['date'] = $dealvars['date'];
-        $_SESSION['sent'] = $dealvars['sent'];
-        $_SESSION['accepted'] = $dealvars['accepted'];
-        $_SESSION['inspection'] = $dealvars['inspection'];
-        $_SESSION['insurance'] = $dealvars['insurance'];
-        $_SESSION['financing2'] = $dealvars['financing2'];
-        $_SESSION['complete'] = $dealvars['complete'];
-
-        $_SESSION['sent'] == 1 ? $_SESSION['sentcheck'] = ' checked' : $_SESSION['sentcheck'] = '';
-        $_SESSION['accepted'] == 1 ? $_SESSION['acceptedcheck'] = ' checked' : $_SESSION['acceptedcheck'] = '';
-        $_SESSION['inspection'] == 1 ? $_SESSION['inspectioncheck'] = ' checked' : $_SESSION['inspectioncheck'] = '';
-        $_SESSION['insurance'] == 1 ? $_SESSION['insurancecheck'] = ' checked' : $_SESSION['insurancecheck'] = '';
-        $_SESSION['financing2'] == 1 ? $_SESSION['financingcheck2'] = ' checked' : $_SESSION['financingcheck2'] = '';
-        $_SESSION['complete'] == 1 ? $_SESSION['completecheck'] = ' checked' : $_SESSION['completecheck'] = '';
+        $c = "/classes.php";
+   require_once dirname("/home/knapp62/public_html/response/index.php", 2).$c;
+        LoadContracts::loaddealvars();
+  
         
-    $pdo->prepare("UPDATE contract SET contract.deal_id = '{$_SESSION['deal_id']}', contract.sent = '{$_SESSION['sent']}' WHERE contract.contract_id = '{$_SESSION['contract_id']}'")->execute();
+    $updatedeal = $pdo->prepare("UPDATE contract SET contract.deal_id = '{$_SESSION['deal_id']}' WHERE contract.contract_id = '{$_SESSION['contract_id']}'");
+    $updatedeal->execute();
     
-   
-    
-  header("Location: http://response.azrealestatehelper.com", 302);
+
+    header("Location: http://response.azrealestatehelper.com", 302);
     exit();
-}
+    }
 
 
 if(isset($_SESSION['seller1'])){
@@ -233,122 +211,39 @@ if(isset($_POST["savechanges"]) || isset($_GET['updateproperty'])) {
 
     (new SqlUpadates())->UpdateProperty1();
     
-            /*
-          $sewer = "";
-          function test_input($data) {
-              $data = trim($data);
-              $data = stripslashes($data);
-              $data = htmlspecialchars($data);
-              return $data;
-            }
-          if(test_input($_GET["wastewater"]) == "Sewer"){
-              $sewer = 1;
-            }else{
-              $sewer = 0;
-            }
-            
-            $_SESSION['sewer'] = $_GET["wastewater"];
-            
-          $sqlupdateproperty = "UPDATE property SET owner1 = :seller1, owner2 = :seller2, address = :address, city = :city, county = :county, zip = :zip, legaldisc = :legaldisc, assessornum = :assessornum, yearbuilt = :yearbuilt, sewer = :wastewater
-                WHERE property_id = :property_id";
-          $s = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-          $stmtupdateproperty = $s->prepare($sqlupdateproperty);
-          $stmtupdateproperty->execute(array(
-            ':property_id' => $_SESSION["property_id"],
-            ':seller1' => $_GET["seller1"],
-            ':seller2' => $_GET["seller2"],
-            ':address' => $_GET["address"],
-            ':city' => $_GET["city"],
-            ':county' => $_GET["county"],
-            ':zip' => $_GET["zip"],
-            ':assessornum' => $_GET["assessornum"],
-            ':legaldisc' => $_GET["legaldisc"],
-            ':yearbuilt' => $_GET["yearbuilt"],
-            ':wastewater' => $sewer));
-            */
         }
           
           if(isset($_GET["buyer1"]) && isset($_GET["purchaseprice"])){$nameproperty = $pdo->query("SELECT * FROM contract WHERE property_id ='{$_SESSION['property_id']}';")->fetch();}
 /* TOOK THIS OUT OF BELOW IT WASNT' CREATING NEW CONTRACT  && $_SESSION['property_id'] != $nameproperty['property_id']*/
   if(isset($_GET["purchaseprice"])) {
-      
-      //UPDATE CONTRACT  POSSIBLE
-    //  $c = "/classes.php";
-  // require_once dirname("/home/knapp62/public_html/response/index.php", 2).$c;
     (new SqlUpadates())->updateContract();
-      /*
-      $leadpaint = "";
-      if($_SESSION['yearbuilt'] < 1978){
-        $leadpaint = 1;
-      } else {
-        $leadpaint = 0;
-      }
-
-      $sewer = "";
-      function test_input($data) {
-          $data = trim($data);
-          $data = stripslashes($data);
-          $data = htmlspecialchars($data);
-          return $data;
-        }
-      if(test_input($_SESSION['sewer']) == "sewer"){
-          $onsitewastewater = 0;
-        }else{
-          $onsitewastewater = 1;
-        }
-
-      $sqlcontract = "INSERT INTO contract (property_id, buyer_id, buyer1, buyer2, seller1, seller2, purchaseprice, earnestmoney, financed, additionaldown, earnestmoneyform, earnestmoneyheld, coedate, buyercontingency, waterwell, hoa, leadpaint, loanassuption, onsitewastewater, sellerfinancing, shortsale, other, refrigerator, washer, dryer, spa, personalprop, personalprop2, financing, sellerconsessionsdollar, homewarrantyorderedby, homewarrantypaidby, homewarrantyamount, additionalterms, accepttime)
-              VALUES (:property_id, :buyer_id, :buyer1, :buyer2, :seller1, :seller2, :purchaseprice, :earnestmoney, :financed, :additionaldown, :earnestmoneyform, :earnestmoneyheld, :coedate, :buyercontingency, :waterwell, :hoa, :leadpaint, :loanassuption, :onsitewastewater, :sellerfinancing, :shortsale, :other, :refrigerator, :washer, :dryer, :spa, :personalprop, :personalprop2, :financing, :sellerconsessionsdollar, :homewarrantyorderedby, :homewarrantypaidby, :homewarrantyamount, :additionalterms, :accepttime)";
-      $s = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-      $stmtcontract = $s->prepare($sqlcontract);
-      $stmtcontract->execute(array(
-        ':property_id' => $_SESSION['property_id'],/* should be tieing foreign key contract and property
-        ':buyer_id' => $_SESSION['buyer_id'],
-        ':buyer1' => $_GET["buyer1"],
-        ':buyer2' => $_GET["buyer2"],
-        ':seller1' => $_GET['seller1'],
-        ':seller2' => $_GET['seller2'],
-        ':purchaseprice' => $_GET["purchaseprice"],
-        ':earnestmoney' => $_GET["earnestmoney"],
-        ':additionaldown' => $_GET["additionaldown"],
-        ':financed' => $_GET["financed"],
-        ':earnestmoneyform' => $_GET["earnestmoneyform"],
-        ':earnestmoneyheld' => $_GET["earnestmoneyheld"],
-        ':coedate' => $_GET["coedate"],
-        ':buyercontingency' => $_GET["buyercontingency"],
-        ':waterwell' => $_GET["waterwell"],
-        ':hoa' => $_GET["hoa"],
-        ':leadpaint' => $leadpaint,
-        ':loanassuption' => $_GET["loanassuption"],
-        ':onsitewastewater' => $onsitewastewater,
-        ':sellerfinancing' => $_GET["sellerfinancing"],
-        ':shortsale' => $_GET["shortsale"],
-        ':other' => $_GET["other"],
-        ':refrigerator' => $_GET["refrigerator"],
-        ':washer' => $_GET["washer"],
-        ':dryer' => $_GET["dryer"],
-        ':spa' => $_GET["spa"],
-        ':personalprop' => $_GET["personalprop"],
-        ':personalprop2' => $_GET["personalprop2"],
-        ':financing' => $_GET["financingtype"],
-        ':sellerconsessionsdollar' => $_GET["sellerconsessions"],
-        ':homewarrantyorderedby' => $_GET["homewarrantyorderedby"],
-        ':homewarrantypaidby' => $_GET["homewarrantypaidby"],
-        ':homewarrantyamount' => "500.00",
-        ':additionalterms' => $_GET["additionalterms"],
-        ':accepttime' => $_GET["accepttime"]
-        ));}
-        */
   }
-  //  $c = "/classes.php";
- //  require_once dirname("/home/knapp62/public_html/response/index.php", 2).$c;  
+
   (new LoadContracts())->loadresponsecontracts(); 
-  
   
   header("Location: https://response.azrealestatehelper.com");
 
   exit();
     }
+
+/* --------------------UPDATE SELLER AGENT-----------------------------*/
+
+if(isset($_GET['selleragent'])){
+          $c = "/classes.php";
+   require dirname("/home/knapp62/public_html/response/index.php", 2).$c;
+   SqlUpadates::UpdateSellerAgent();
+    header("Location: https://response.azrealestatehelper.com");
+  exit();
+}
+
+
+if(isset($_GET['buyeragent'])){
+          $c = "/classes.php";
+   require dirname("/home/knapp62/public_html/response/index.php", 2).$c;
+   SqlUpadates::UpdateBuyerAgent();
+    header("Location: https://response.azrealestatehelper.com");
+  exit();
+}
 
 
 /* USER LOGIN----------------------------------------------------------------*/
@@ -448,7 +343,6 @@ header("Location: http://response.azrealestatehelper.com", 302);
     }else{
      $_SESSION['passnomatch1'] = "Passwords don't match";
      
-   
           exit(); 
  }} 
 
