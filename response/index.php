@@ -493,14 +493,14 @@ if(empty($_SESSION['user_id'])){
       <button type="button" class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#demo" >Seller Agent</button>
         <div id="demo" class="collapse <? echo $_SESSION['agentbutton' .$inc]?>">
           <li class="list-group-item">Agent Name: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo  $_SESSION['agentname']?>" name="agentname" ></li>
-          <li class="list-group-item">Agent Email: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo  $_SESSION['agentemail' .$inc]?>" name="agentemail" ></li>
-          <li class="list-group-item">Agent Liscence: <input type="number" class="d-inline-flex bd-highlight"  value="<? echo  $_SESSION['agentlicense' .$inc]?>" name="agentlicense" ></li>
-          <li class="list-group-item">Additional Agent Name: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['agentname2' .$inc]?>" name="agentname2" ></li>
-          <li class="list-group-item">Additional Agent Liscence: <input type="number" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['agentlicense2' .$inc]?>" name="agentlicense2" ></li>
-          <li class="list-group-item">Agent Firm: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmname' .$inc]?>" name="firmname"></li>
-          <li class="list-group-item">Agent Firm Address: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmaddress' .$inc]?>" name="firmaddress" ></li>
-          <li class="list-group-item">Agent Firm Phone: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmphone' .$inc]?>" name="firmphone" ></li>
-          <li class="list-group-item">Agent Firm Liscence: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmlicense' .$inc]?>" name="firmlicense" ></li>
+          <li class="list-group-item">Agent Email: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo  $_SESSION['agentemail']?>" name="agentemail" ></li>
+          <li class="list-group-item">Agent Liscence: <input type="number" class="d-inline-flex bd-highlight"  value="<? echo  $_SESSION['agentlicense']?>" name="agentlicense" ></li>
+          <li class="list-group-item">Additional Agent Name: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['agentname2']?>" name="agentname2" ></li>
+          <li class="list-group-item">Additional Agent Liscence: <input type="number" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['agentlicense2']?>" name="agentlicense2" ></li>
+          <li class="list-group-item">Agent Firm: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmname']?>" name="firmname"></li>
+          <li class="list-group-item">Agent Firm Address: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmaddress']?>" name="firmaddress" ></li>
+          <li class="list-group-item">Agent Firm Phone: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmphone']?>" name="firmphone" ></li>
+          <li class="list-group-item">Agent Firm Liscence: <input type="text" class="d-inline-flex bd-highlight"  value="<? echo $_SESSION['firmlicense']?>" name="firmlicense" ></li>
           <button draggable="true" class="btn btn-outline-success" name="selleragent" value="selleragent" type="submit">Update Seller Agent</button>
           </form>
             </div></div>
@@ -789,19 +789,7 @@ if(empty($_SESSION['user_id'])){
       <h5>Seller Must Respond By: </h5>
       <input type="datetime-local" class="form-control rounded-pill"  name="accepttime" value='.date_format($_SESSION['accepttimedate' .$inc], "Y-m-d\TH:i:s").'>
     </li>
-      <h1>The Seller Does '.$_SESSION['agentmessage' .$inc].'</h1>
-
-      <button type="button" class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#demo" >Seller Agent</button>
-        <div id="demo" class="collapse '.$_SESSION['agentbutton' .$inc].'">
-          <li class="list-group-item">Agent Name: <input type="text" class="d-inline-flex bd-highlight"  value="'. $_SESSION['agentname' .$inc].'" name="agentname" ></li>
-          <li class="list-group-item">Agent Email: <input type="text" class="d-inline-flex bd-highlight"  value="'. $_SESSION['agentemail' .$inc].'" name="agentemail" ></li>
-          <li class="list-group-item">Agent Liscence: <input type="number" class="d-inline-flex bd-highlight"  value="'. $_SESSION['agentlicense' .$inc].'" name="agentlicense" ></li>
-          <li class="list-group-item">Additional Agent Name: <input type="text" class="d-inline-flex bd-highlight"  value="'.$_SESSION['agentname2' .$inc].'" name="agentname2" ></li>
-          <li class="list-group-item">Additional Agent Liscence: <input type="number" class="d-inline-flex bd-highlight"  value="'.$_SESSION['agentlicense2' .$inc].'" name="agentlicense2" ></li>
-          <li class="list-group-item">Agent Firm: <input type="text" class="d-inline-flex bd-highlight"  value="'.$_SESSION['firmname' .$inc].'" name="firmname"></li>
-          <li class="list-group-item">Agent Firm Address: <input type="text" class="d-inline-flex bd-highlight"  value="'.$_SESSION['firmaddress' .$inc].'" name="firmaddress" ></li>
-          <li class="list-group-item">Agent Firm Phone: <input type="text" class="d-inline-flex bd-highlight"  value="'.$_SESSION['firmphone' .$inc].'" name="firmphone" ></li>
-          <li class="list-group-item">Agent Firm Liscence: <input type="text" class="d-inline-flex bd-highlight"  value="'.$_SESSION['firmlicense' .$inc].'" name="firmlicense" ></li></fieldset>'; 
+     </fieldset>'; 
         if($inc7 == 0){echo '
         <div class="d-grid col-6">
         <br><button type="submit" name="savechanges" class="btn btn-primary" '.$_SESSION['disabled'].'>Save Changes</button>
@@ -980,21 +968,7 @@ if($_SESSION['counter'] == 1 or $_SESSION['counter'] == "counter"){
       <h5>Seller Must Respond By: </h5>
       <input type="datetime-local" class="form-control" id="accepttime0" name="accepttime" value='.date_format($_SESSION['accepttimedate' .$inc], "Y-m-d\TH:i:s").'>
     </li>
-      <h1>The Seller Does '.$_SESSION['agentmessage' .$inc].'</h1>
-
-      <button type="button" class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#demo" >Seller Agent</button>
-        <div id="demo" class="collapse '.$_SESSION['agentbutton' .$inc].'">
-          <li class="list-group-item">Agent Name: <input type="text" class="d-inline-flex bd-highlight" id="agentname0" value="'. $_SESSION['agentname' .$inc].'" name="agentname" ></li>
-          <li class="list-group-item">Agent Email: <input type="text" class="d-inline-flex bd-highlight" id="agentemail0" value="'. $_SESSION['agentemail' .$inc].'" name="agentemail" ></li>
-          <li class="list-group-item">Agent Liscence: <input type="number" class="d-inline-flex bd-highlight" id="agentlicense0" value="'. $_SESSION['agentlicense' .$inc].'" name="agentlicense" ></li>
-          <li class="list-group-item">Additional Agent Name: <input type="text" class="d-inline-flex bd-highlight" id="agentname20" value="'.$_SESSION['agentname2' .$inc].'" name="agentname2" ></li>
-          <li class="list-group-item">Additional Agent Liscence: <input type="number" class="d-inline-flex bd-highlight" id="agentlicense20" value="'.$_SESSION['agentlicense2' .$inc].'" name="agentlicense2" ></li>
-          <li class="list-group-item">Agent Firm: <input type="text" class="d-inline-flex bd-highlight" id="firmname0" value="'.$_SESSION['firmname' .$inc].'" name="firmname"></li>
-          <li class="list-group-item">Agent Firm Address: <input type="text" class="d-inline-flex bd-highlight" id="firmaddress0" value="'.$_SESSION['firmaddress' .$inc].'" name="firmaddress" ></li>
-          <li class="list-group-item">Agent Firm Phone: <input type="text" class="d-inline-flex bd-highlight" id="firmphone0" value="'.$_SESSION['firmphone' .$inc].'" name="firmphone" ></li>
-          <li class="list-group-item">Agent Firm Liscence: <input type="text" class="d-inline-flex bd-highlight" id="firmlicense0" value="'.$_SESSION['firmlicense' .$inc].'" name="firmlicense" ></li>
-        </div>
-        
+     
  
     <br><button type="submit" name="create" class="btn btn-primary btn-lg"'.$_SESSION['disabled' .$inc4].'>I Accept Create Contract</button>
     
