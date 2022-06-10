@@ -228,6 +228,7 @@ if(isset($_POST["offer"])) {
 /* SEVED CONTRACTS FROM LANDING set contract_id main var to selected address through button on landing page */
   if(isset($_POST["saved"]) || isset($_POST["saved2"])) {
    
+   
     $_SESSION['contract_id'] = $_POST["saved"].$_POST["saved2"];
         $c = "/classes.php";
    require dirname("/home/knapp62/public_html/response/index.php", 2).$c;
@@ -273,4 +274,3 @@ if(isset($_SESSION['emailexists'])){
 }
 
  ?>
-
