@@ -178,7 +178,7 @@ if(empty($_SESSION['user_id'])){
                     
            */
             $_SESSION['userview'] = $_SESSION['buyerseller'].$_SESSION['createdby'].$_SESSION['sent'];
-             
+            $_SESSION['buyerseller'] == $_SESSION['createdby'] ? $_SESSION['usercreated'] = 1 : $_SESSION['usercreated'] = 0;
         echo "session name: " .$_SESSION['name'];
         echo " session user_id: " .$_SESSION['user_id'];
         echo " session buyer_id: " .$_SESSION['buyer_id'];
@@ -217,7 +217,7 @@ if(empty($_SESSION['user_id'])){
 </div>
 <div class="m-3">
     <div class="shadow col-sm-12 p-3 bg-transparent text-dark border border border-primary rounded">
-      <h1>Check List</h1>
+      <h3>Check List</h3>
     <div class="row">
      <div class="shadow col-sm-6 p-3 bg-transparent text-dark border border border-primary rounded">    
       <ul class="list-group">
@@ -460,8 +460,9 @@ if(empty($_SESSION['user_id'])){
                 <div class="row">
                     <div class="col">
                 <h4>Property Information</h4>
+                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="collapse" data-bs-target="#propertybutton" >Seller Agent</button>
                  <form action="php/retd.php"  method="get" >
-         
+          <div id="propertybutton" class="collapse">
         <li class="list-group-item">Buyer name: <input type="text" class="d-inline-flex rounded-pill"  value="<? echo $_SESSION['buyer1']?>" name="buyer1" required ></li>
         <li class="list-group-item">Second Buyer name: <input type="text" class="d-inline-flex bd-highlight rounded-pill"  value="<? echo $_SESSION['buyer2']?>" name="buyer2" ></li>
         <li class="list-group-item">Seller name: <input type="text" class="form-control rounded-pill"  value="<? echo $_SESSION['seller1']?>" name="seller1" required ></li>
@@ -485,7 +486,7 @@ if(empty($_SESSION['user_id'])){
               </div></li><br>
               
           <button draggable="true" class="btn btn-outline-success" name="updateproperty" value="updateproperty" type="submit">Update Property</button>
-                </form></div>
+                </form></div></div>
                 
     <div class="col">
                  <h4>Seller Agent Info</h4>
@@ -645,13 +646,13 @@ if(empty($_SESSION['user_id'])){
                   
                   echo '
   <div class="col">
-      <h1>'.$_SESSION['counteroffer'].$_SESSION['countercount' .$inc5].'</h1>
+      <h3>'.$_SESSION['counteroffer'].$_SESSION['countercount' .$inc5].'</h3>
       <form action="php/generate.php"  method="get" >
           <fieldset disabled>
         
 
  
-        <h1>Purchase Contract Summary</h1>
+        <h3>Purchase Contract Summary</h3>
         <li class="list-group-item">Purchase Price: $<input type="number" class="d-inline-flex bd-highlight rounded-pill"  value="'.$_SESSION['purchaseprice' .$inc].'" name="purchaseprice" ></li>
         <li class="list-group-item">Earnest Money: $<input type="number" class="d-inline-flex bd-highlight rounded-pill"  value="'.$_SESSION['earnestmoney' .$inc].'" name="earnestmoney" ></li>
         <li class="list-group-item">Additional Down Payment: $<input type="number" class="d-inline-flex bd-highlight rounded-pill"  value="'.$_SESSION['additionaldown' .$inc].'" name="additionaldown" ></li>
@@ -789,21 +790,17 @@ if(empty($_SESSION['user_id'])){
       <h5>Seller Must Respond By: </h5>
       <input type="datetime-local" class="form-control rounded-pill"  name="accepttime" value='.date_format($_SESSION['accepttimedate' .$inc], "Y-m-d\TH:i:s").'>
     </li>
-     </fieldset>'; 
-        if($inc7 == 0){echo '
-        <div class="d-grid col-6">
-        <br><button type="submit" name="savechanges" class="btn btn-primary" '.$_SESSION['disabled'].'>Save Changes</button>
+     </fieldset>
+        <div class="d-grid col-6" >
+        <br><button id="b1'.$inc.'" type="submit" name="savechanges" class="btn btn-primary btn-sm" '.$_SESSION['disabled'].'>Save Changes</button>
     
-    <br><button type="submit" name="create" class="btn btn-primary"'.$_SESSION['disabled'].'>I Accept Create Contract</button></form><br>';}else{echo '</form><br>';}
+    <button id="b2'.$inc.'" type="submit" name="create" class="btn btn-primary btn-sm"'.$_SESSION['disabled'].'>I Accept Create Contract</button></form>
     
-    
-       
-      if(!in_array($_SESSION['userview'], ['111', '001'], true) && $inc7 == 0){
-       echo '<form action="php/retd.php"  method="post">
+    <form action="php/retd.php"  method="post">
              <input type="hidden" name="counter" value="counter"/>
-            <button class="btn btn-outline-primary" type="submit" '.$_SESSION['disabled'].'>'.$_SESSION['counterbuttontext'].'</button> </form></div></div>
+            <button id="b3'.$inc.'" class="btn btn-outline-primary btn-sm" type="submit" '.$_SESSION['disabled'].'>'.$_SESSION['counterbuttontext'].'</button> </form></div></div>
 
-';}else{echo '</div>';}
+';
 
 
 if(isset($_SESSION['decrementdisable'])){
@@ -826,11 +823,11 @@ if($_SESSION['counter'] == 1 or $_SESSION['counter'] == "counter"){
      $inc5 == 1 ? $_SESSION['counteroffer'] = "Original Offer" : $_SESSION['counteroffer'] = "Counter ";
                     $inc5 == 1 ? $_SESSION['countercount' .$inc5] = "" : $_SESSION['countercount' .$inc5] = $inc5;
     echo '
-  <div class="col">
-      <h1>'.$_SESSION['counteroffer'].$_SESSION['countercount' .$inc5].'</h1>
+  <div class="col" id="countercol">
+      <h3>'.$_SESSION['counteroffer'].$_SESSION['countercount' .$inc5].'</h3>
       <form action="php/generate.php"  method="get" >
 
-        <h1>Purchase Contract Summary</h1>
+        <h3>Purchase Contract Summary</h3>
         <li class="list-group-item">Purchase Price: $<input type="number" class="d-inline-flex bd-highlight" id="purchaseprice0" value="'.$_SESSION['purchaseprice' .$inc].'" name="purchaseprice" ></li>
         <li class="list-group-item">Earnest Money: $<input type="number" class="d-inline-flex bd-highlight" id="earnestmoney0" value="'.$_SESSION['earnestmoney' .$inc].'" name="earnestmoney" ></li>
         <li class="list-group-item">Additional Down Payment: $<input type="number" class="d-inline-flex bd-highlight" id="additionaldown0" value="'.$_SESSION['additionaldown' .$inc].'" name="additionaldown" ></li>
@@ -970,12 +967,12 @@ if($_SESSION['counter'] == 1 or $_SESSION['counter'] == "counter"){
     </li>
      
  
-    <br><button type="submit" name="create" class="btn btn-primary btn-lg"'.$_SESSION['disabled' .$inc4].'>I Accept Create Contract</button>
+    <br><button type="submit" name="create" class="btn btn-primary btn-sm"'.$_SESSION['disabled' .$inc4].'>I Accept Create Contract</button>
     
-    <br><button type="submit" name="sendsave" class="btn btn-primary btn-sm" value=1>Save Changes</button><br>
-    <br>
+    <button type="submit" name="sendsave" class="btn btn-primary btn-sm" value=1>Save Changes</button>
+    
    
-    <button type="submit" name="sendsave" class="btn btn-primary btn-sm" value=2>Send Counter</button><br>
+    <button type="submit" name="sendsave" class="btn btn-primary btn-sm" value=2>Send Counter</button>
     
        </form>
        '; 
@@ -983,7 +980,7 @@ if($_SESSION['counter'] == 1 or $_SESSION['counter'] == "counter"){
        if($_SESSION['$inc6'] != 0){echo '
        <form action="php/retd.php"  method="post">
              <input type="hidden" name="counter" value="counter"/>
-            <button class="btn btn-outline-primary" type="submit" href="https://response.azrealestatehelper.com" '.$_SESSION['disabled' .$inc4].'>Hide Counter Offer</button></form>';}
+            <button class="btn btn-outline-primary btn-sm" type="submit" href="https://response.azrealestatehelper.com" '.$_SESSION['disabled' .$inc4].'>Hide Counter Offer</button></form>';}
 
 }
 
