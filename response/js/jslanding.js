@@ -1,18 +1,49 @@
-     if ( window.history.replaceState ) {
+        if ( window.history.replaceState ) {
         //prevents repost on reload
         window.history.replaceState( null, null, window.location.href );
     }
     
+   
 
     $(document).ready(function(){
       $('[data-bs-toggle="popover"]').popover({html: true});
-     console.log('hello anyone listening');
+      
+      
+      //CONTROLS WHAT CONTRACT BUTTONS APPEAR WHEN
+      
+      var inc2 = 10;
+    //SEARCH HOW MANY ARE VISIBLE
+     while($('#b1' + inc2).length !== 0){
+          console.log(inc2);
+          inc2++;
+      }
+    //HIDES ALL BUT THE LAST CONTRACTS BUTTONS
+       inc2 = inc2 - 10;
+        console.log(inc2);
+        for (let i = 1; i < inc2; i++) {
+            var inc3 = 10;
+          $('#b1' + inc3 + ', #b2' + inc3 + ', #b3' + inc3).hide();
+       
+          console.log(inc3);
+          inc3++;
+          
+        }
+
+        //HIDES LAST CONTRACT BUTTON WHEN COUNTER IS VISIBLE
+        
+        if($('#countercol' + name).length !== 0){
+        
+        $('#b1' + inc3 + ', #b2' + inc3 + ', #b3' + inc3).hide();
+        }
+    
+  
   
 $('#myModal').modal({backdrop: 'static', keyboard: false});
         $("#binserp").css("display", "none");
     $("#inspection, #binserp").click(function(){
       $("#binserp").toggle("slow");});
     /*   TOGGLE RESET PASSWORD*/
+    
        $('#pwdreset').click(function(){
        
            $('#sendkey, #1, #resetket, #resetbutton, #a, #b, #c').toggle();
@@ -178,7 +209,10 @@ $('#myModal').modal({backdrop: 'static', keyboard: false});
          console.log("reset should show");
          return false;
             });
-    }})}); });
+    }})
+        
+    });
+    });
     
    //INFO BOX
     $(document).ready(function(){
