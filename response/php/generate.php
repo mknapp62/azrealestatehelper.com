@@ -211,6 +211,7 @@ if(isset($_GET["sendsave"])) {
               $_SESSION['contract_id' .$inc5] = $nameproperty['contract_id'];
               $_SESSION['createdby'] = $nameproperty['createdby'];
               $_SESSION['buyer_id'] = $nameproperty['buyer_id'];
+              $_SESSION['seller_id'] = $nameproperty['seller_id'];
           }
 /* TOOK THIS OUT OF BELOW IT WASNT' CREATING NEW CONTRACT  && $_SESSION['property_id'] != $nameproperty['property_id']*/
   
@@ -231,8 +232,10 @@ if(isset($_GET["sendsave"])) {
     if(in_array($_SESSION['userview'], ['111', '101', '001', '011'], true )){
       $sqlcontract = "INSERT INTO contract (property_id, buyer_id, buyer1, buyer2, seller1, seller2, seller_id, purchaseprice, earnestmoney, financed, additionaldown, earnestmoneyform, earnestmoneyheld, coedate, buyercontingency, waterwell, hoa, leadpaint, loanassuption, onsitewastewater, sellerfinancing, shortsale, other, refrigerator, washer, dryer, spa, personalprop, personalprop2, financing, sellerconsessionsdollar, homewarrantyorderedby, homewarrantypaidby, homewarrantyamount, additionalterms, accepttime, selleragentid, createdby, sent)
               VALUES (:property_id, :buyer_id, :buyer1, :buyer2, :seller1, :seller2, :seller_id, :purchaseprice, :earnestmoney, :financed, :additionaldown, :earnestmoneyform, :earnestmoneyheld, :coedate, :buyercontingency, :waterwell, :hoa, :leadpaint, :loanassuption, :onsitewastewater, :sellerfinancing, :shortsale, :other, :refrigerator, :washer, :dryer, :spa, :personalprop, :personalprop2, :financing, :sellerconsessionsdollar, :homewarrantyorderedby, :homewarrantypaidby, :homewarrantyamount, :additionalterms, :accepttime, :selleragentid, :createdby, :sent)";
+              
          $_SESSION['createdby'] == 1 ? $_SESSION['createdby'] = 0 : $_SESSION['createdby'] = 1;
-         $_SESSION['createdby'] == 1? $_SESSION['ifseller'] =  $_SESSION['user_id'] : $_SESSION['user_id'] = "";
+         
+         $_SESSION['createdby'] == 1? $_SESSION['ifseller'] =  $_SESSION['user_id'] : $_SESSION['ifseller'] = $_SESSION['seller_id'];
          
          $s = new PDO('mysql:localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
       $stmtcontract = $s->prepare($sqlcontract);
