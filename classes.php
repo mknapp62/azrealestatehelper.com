@@ -433,7 +433,7 @@ class LoadContracts{
         public static function loaduserview(){
                         require "php/pass.php";
             $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-            $whowaslast =   $pdo->query("SELECT createdby, sent
+            $whowaslast =   $pdo->query("SELECT createdby, sent, buyer_id, seller_id
             FROM contract
             WHERE property_id = '{$_SESSION['property_id']}'
             ORDER BY contract_id DESC
@@ -441,8 +441,10 @@ class LoadContracts{
             
             $_SESSION['createdby'] = $whowaslast['createdby'];  
             $_SESSION['sent'] = $whowaslast['sent'];
+            $whowaslast['seller_id'] == $_SESSION['user_id'] ? $_SESSION['buyerseller'] = 1 : $_SESSION['buyerseller'] = 0;
             
-            $_POST["saved"] == '' ? $_SESSION['buyerseller'] = 1 : $_SESSION['buyerseller'] = 0;
+            
+        //    $_POST["saved"] == '' ? $_SESSION['buyerseller'] = 1 : $_SESSION['buyerseller'] = 0;
             /* who is logged in, who created the last contract, was it sent:  buyer:0 seller:1 sent:bool */
             $_SESSION['userview'] = $_SESSION['buyerseller'].$_SESSION['createdby'].$_SESSION['sent'];
             
@@ -531,7 +533,6 @@ class LoadContracts{
         public static function loaddealvars(){
               require "php/pass.php";
             $pdo = new PDO('mysql:host=localhost;port=3306;dbname=knapp62_transaction', 'root', $pass);
-            $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
     
             $dealvars = $pdo->query("SELECT * FROM deal WHERE contract_id = '{$_SESSION['contract_id']}';")->fetch();
             $_SESSION['deal_id'] = $dealvars['deal_id'];
@@ -786,10 +787,7 @@ class LoadContracts{
    
 
       $contract2 = $pdo->prepare("SELECT * FROM contract WHERE property_id = :xyz;");
-      /*MIGHT NEED TO CHANGE FROM POST TO SESSION BY WHERE IT CAME FROM
-      
-      THERE IS ANOTHER POST ID ON 785ISH*/
-      
+   
      
       $contract2->execute(array(':xyz' => $_SESSION['property_id']));
       $address2 = $pdo->prepare("SELECT * FROM property INNER JOIN contract
