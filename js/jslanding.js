@@ -7,7 +7,7 @@ if (var Purchase !== undefined && var null !== null){
 */ 
 $(document).ready(function(){
   $('[data-bs-toggle="popover"]').popover({html: true});
-  alert('This website is NOT complete and should not be relied upon to create or negotiate offers.  The goal is to create a negotiation/transaction interface, to reduce the friction in buying and selling residential real estate.  Current needs are Legal (Re-Write Residential Sales Contract) and help from any other developers.  Languages/frameworks include: PHP, Javascript, JQuery, CSS, Bootstrap 5, MySql, PDFTK. Current work includes: Converting to SQL prepared statements, migrating to a Git repository, plugging data leaks.  Let me know if you can contribute mknapp62@gmail.com');
+  alert('This website is NOT complete and should not be relied upon to create or negotiate offers.  The goal is to create a negotiation/transaction interface, to reduce the friction in buying and selling residential real estate.  Current needs are Legal (Re-Write Residential Sales Contract) and help from any other developers.  Languages/frameworks include: PHP, Javascript, JQuery, CSS, Bootstrap 5, MySql, PDFTK, Linux VPS on apache server.  Let me know if you can contribute mknapp62@gmail.com https://github.com/mknapp62/azrealestatehelper.com (By hitting OK you agree to use cookies)');
   
    $.getJSON("php/retd.php", function(data){
        
