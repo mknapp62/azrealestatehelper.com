@@ -1,4 +1,5 @@
 # azrealestatehelper.com
+now OfferXccepted.com
 
 Taking the friction out of the real estate purchasing process. 
 
@@ -9,7 +10,6 @@ At first, I wanted to create a site that would fill out a purchase contract to b
 * The platform will generate filled out documents based on user input, think of tax filing software.
 * It should be able to fulfill the needs of most transactions, while more complex needs would still require real estate agents and attorneys 
 
-One current need is to re-write the contract to avoid copyright issues.
 
 This will be a great tool for Agents, FSBO and unrepresented buyers
 
